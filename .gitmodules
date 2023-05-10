@@ -1,6 +1,6 @@
 [submodule "excons"]
 	path = excons
-	url = https://github.com/sol-ansano-kim/excons.git
+	url = git@github.com:marza-animation-planet/excons.git
 [submodule "cython"]
 	path = cython
-	url = https://github.com/cython/cython
+	url = git@github.com:cython/cython.git
