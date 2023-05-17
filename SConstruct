@@ -12,6 +12,7 @@ minor = 5
 patch = 4
 
 os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + os.pathsep + os.path.abspath("cython")
+print(os.environ["PYTHONPATH"])
 maya.SetupMscver()
 
 env = excons.MakeBaseEnv()
@@ -52,7 +53,7 @@ if sys.platform == "win32":
 elif sys.platform == "darwin":
     os_name = "macOS"
 
-if mayaver in ("2022", ):
+if mayaver in ("2022", "2023"):
     install_dir = "%s/dist/medic_%s_%s_py%s/medic" % (excons.OutputBaseDirectory(), os_name, mayaver, python.Version().replace(".", ""))
     package_file = "%s/dist/medic_%s_maya%s-py%s-%s_%s_%s.zip" % (excons.OutputBaseDirectory(), os_name, mayaver, python.Version().replace(".", ""), major, minor, patch)
 else:
