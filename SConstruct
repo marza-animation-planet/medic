@@ -26,7 +26,8 @@ else:
 
 defs = []
 if sys.platform == "win32":
-    cppflags = " /wd4100 /wd4505 /wd4701 /wd4127 /wd4189 /wd4005 /wd4510 /wd4512 /wd4610 /wd4211 /wd4702 /wd4706 /wd4310"
+    cppflags = (" /wd4100 /wd4505 /wd4701 /wd4127 /wd4189 /wd4005 "
+                "/wd4510 /wd4512 /wd4610 /wd4211 /wd4702 /wd4706 /wd4310")
 else:
     cppflags = " -Wno-unused-parameter -Wunused-variable"
     if maya.Version(asString=False, nice=True) >= 2018:
@@ -54,11 +55,31 @@ elif sys.platform == "darwin":
     os_name = "macOS"
 
 if mayaver in ("2022", "2023"):
-    install_dir = "%s/dist/medic_%s_%s_py%s/medic" % (excons.OutputBaseDirectory(), os_name, mayaver, python.Version().replace(".", ""))
-    package_file = "%s/dist/medic_%s_maya%s-py%s-%s_%s_%s.zip" % (excons.OutputBaseDirectory(), os_name, mayaver, python.Version().replace(".", ""), major, minor, patch)
+    install_dir = "%s/dist/medic_%s_%s_py%s/medic" % (
+        excons.OutputBaseDirectory(),
+        os_name,
+        mayaver,
+        python.Version().replace(".", ""),
+    )
+    package_file = "%s/dist/medic_%s_maya%s-py%s-%s_%s_%s.zip" % (
+        excons.OutputBaseDirectory(),
+        os_name,
+        mayaver,
+        python.Version().replace(".", ""),
+        major,
+        minor,
+        patch,
+    )
 else:
     install_dir = "%s/dist/medic_%s_%s/medic" % (excons.OutputBaseDirectory(), os_name, mayaver)
-    package_file = "%s/dist/medic_%s_maya%s-%s_%s_%s.zip" % (excons.OutputBaseDirectory(), os_name, mayaver, major, minor, patch)
+    package_file = "%s/dist/medic_%s_maya%s-%s_%s_%s.zip" % (
+        excons.OutputBaseDirectory(),
+        os_name,
+        mayaver,
+        major,
+        minor,
+        patch,
+    )
 
 
 ## cython
@@ -123,98 +144,131 @@ def Pacakage(target, source, env):
         print("Package : %s -> %s" % (path, out_path))
         shutil.copy(path, out_path)
 
-prjs.append({"name": "medic",
-             "type": "sharedlib",
-             "alias": "medic-lib",
-             "defs": defs,
-             "cppflags": cppflags,
-             "incdirs": [out_incdir],
-             "prefix": mayaver,
-             "bldprefix": "maya-%s" % mayaver,
-             "srcs": excons.glob("src/core/*.cpp"),
-             "symvis": "default",
-             "install": {out_incdir + "/medic": headers},
-             "custom": customs})
 
-prjs.append({"name": "_medic",
-             "type": "dynamicmodule",
-             "alias": "medic-python",
-             "ext": ".so" if sys.platform != "win32" else ".pyd",
-             "prefix": "py/%s" % (mayaver),
-             "bldprefix": "maya-%s" % mayaver,
-             "defs": defs,
-             "rpath": out_libdir,
-             "cppflags": cppflags,
-             "symvis": "default",
-             "incdirs": [out_incdir, "/usr/include"],
-             "libdirs": [out_libdir],
-             "libs": ["medic"],
-             "deps": ["medic-lib"],
-             "srcs": [cython_out],
-             "install": {out_pydir: ["src/py/medic.py"]},
-             "custom": customs + [python.SoftRequire]})
+prjs.append(
+    {
+        "name": "medic",
+        "type": "sharedlib",
+        "alias": "medic-lib",
+        "defs": defs,
+        "cppflags": cppflags,
+        "incdirs": [out_incdir],
+        "prefix": mayaver,
+        "bldprefix": "maya-%s" % mayaver,
+        "srcs": excons.glob("src/core/*.cpp"),
+        "symvis": "default",
+        "install": {out_incdir + "/medic": headers},
+        "custom": customs,
+    }
+)
+
+prjs.append(
+    {
+        "name": "_medic",
+        "type": "dynamicmodule",
+        "alias": "medic-python",
+        "ext": ".so" if sys.platform != "win32" else ".pyd",
+        "prefix": "py/%s" % (mayaver),
+        "bldprefix": "maya-%s" % mayaver,
+        "defs": defs,
+        "rpath": out_libdir,
+        "cppflags": cppflags,
+        "symvis": "default",
+        "incdirs": [out_incdir, "/usr/include"],
+        "libdirs": [out_libdir],
+        "libs": ["medic"],
+        "deps": ["medic-lib"],
+        "srcs": [cython_out],
+        "install": {out_pydir: ["src/py/medic.py"]},
+        "custom": customs + [python.SoftRequire],
+    }
+)
 
 # plugins
 for plug in excons.glob("plugins/Tester/*.cpp"):
-    prjs.append({"name": os.path.splitext(os.path.basename(plug))[0],
-                 "type": "dynamicmodule",
-                 "alias": "medic-plugins",
-                 "prefix": "plugins/%s/Tester" % (mayaver),
-                 "bldprefix": "maya-%s" % mayaver,
-                 "defs": defs,
-                 "rpath": out_libdir,
-                 "cppflags": cppflags,
-                 "symvis": "default",
-                 "incdirs": [out_incdir],
-                 "libdirs": [out_libdir],
-                 "libs": ["medic"],
-                 "deps": ["medic-lib"],
-                 "srcs": [plug],
-                 "custom": customs})
+    prjs.append(
+        {
+            "name": os.path.splitext(os.path.basename(plug))[0],
+            "type": "dynamicmodule",
+            "alias": "medic-plugins",
+            "prefix": "plugins/%s/Tester" % (mayaver),
+            "bldprefix": "maya-%s" % mayaver,
+            "defs": defs,
+            "rpath": out_libdir,
+            "cppflags": cppflags,
+            "symvis": "default",
+            "incdirs": [out_incdir],
+            "libdirs": [out_libdir],
+            "libs": ["medic"],
+            "deps": ["medic-lib"],
+            "srcs": [plug],
+            "custom": customs,
+        }
+    )
 
 py_plugs = excons.glob("plugins/Tester/*.py")
 
 if py_plugs:
-    prjs.append({"name": "pyPlugins",
-                 "type": "install",
-                 "alias": "medic-py-plugins",
-                 "install": {"plugins/%s/Tester" % (mayaver): py_plugs}})
+    prjs.append(
+        {
+            "name": "pyPlugins",
+            "type": "install",
+            "alias": "medic-py-plugins",
+            "install": {"plugins/%s/Tester" % (mayaver): py_plugs},
+        }
+    )
 
 kartes = excons.glob("plugins/Karte/*.karte")
 if kartes:
-    prjs.append({"name": "kartes",
-                 "type": "install",
-                 "alias": "medic-kartes",
-                 "install": {"plugins/%s/Karte" % (mayaver): kartes}})
+    prjs.append(
+        {
+            "name": "kartes",
+            "type": "install",
+            "alias": "medic-kartes",
+            "install": {"plugins/%s/Karte" % (mayaver): kartes},
+        }
+    )
 
 if custom_cpp:
     for cpp in custom_cpp:
-        prjs.append({"name": os.path.splitext(os.path.basename(cpp))[0],
-                     "type": "dynamicmodule",
-                     "alias": "medic-custom-plugins",
-                     "prefix": "custom/%s/Tester" % (mayaver),
-                     "bldprefix": "maya-%s" % mayaver,
-                     "defs": defs,
-                     "rpath": out_libdir,
-                     "cppflags": cppflags,
-                     "symvis": "default",
-                     "incdirs": [out_incdir],
-                     "libdirs": [out_libdir],
-                     "libs": ["medic"],
-                     "deps": ["medic-lib"],
-                     "srcs": [cpp],
-                     "custom": customs})
+        prjs.append(
+            {
+                "name": os.path.splitext(os.path.basename(cpp))[0],
+                "type": "dynamicmodule",
+                "alias": "medic-custom-plugins",
+                "prefix": "custom/%s/Tester" % (mayaver),
+                "bldprefix": "maya-%s" % mayaver,
+                "defs": defs,
+                "rpath": out_libdir,
+                "cppflags": cppflags,
+                "symvis": "default",
+                "incdirs": [out_incdir],
+                "libdirs": [out_libdir],
+                "libs": ["medic"],
+                "deps": ["medic-lib"],
+                "srcs": [cpp],
+                "custom": customs,
+            }
+        )
 
 if custom_py:
-    prjs.append({"name": "medicCustonPyPlugins",
-                 "type": "install",
-                 "alias": "medic-custom-py-plugins",
-                 "install": {"custom/%s/Tester" % (mayaver): custom_py}})
+    prjs.append(
+        {
+            "name": "medicCustonPyPlugins",
+            "type": "install",
+            "alias": "medic-custom-py-plugins",
+            "install": {"custom/%s/Tester" % (mayaver): custom_py},
+        }
+    )
 
-prjs.append({"name": "medicUI",
-             "type": "install",
-             "alias": "medic-ui",
-             "install": {out_pydir: ["python/medicUI"]}})
+prjs.append(
+    {
+        "name": "medicUI",
+        "type": "install",
+        "alias": "medic-ui",
+        "install": {out_pydir: ["python/medicUI"]},
+    }
+)
 
 
 targets = excons.DeclareTargets(env, prjs)
@@ -271,5 +325,7 @@ for k, contents in targets.items():
 
 env["ZIPROOT"] = os.path.join(install_dir, "..")
 
-env.Alias("package", env.Zip(package_file, [install_dir, os.path.join(install_dir, "../medic.mod")]))
+env.Alias(
+    "package", env.Zip(package_file, [install_dir, os.path.join(install_dir, "../medic.mod")])
+)
 env.Default(["medicAll"])
