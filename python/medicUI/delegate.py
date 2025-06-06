@@ -1,7 +1,7 @@
-from PySide2 import QtWidgets
-from PySide2 import QtCore
-from PySide2 import QtGui
 import os
+
+from Qt import QtWidgets, QtCore, QtGui
+
 from . import model
 
 
@@ -16,9 +16,9 @@ class ListItemDelegate(QtWidgets.QStyledItemDelegate):
         self.__selected_color = QtGui.QColor(30, 108, 210)
 
     def getBackgroudColor(self, option, index):
-        if (option.state & QtWidgets.QStyle.State_Selected):
+        if option.state & QtWidgets.QStyle.State_Selected:
             return self.__selected_color
-        elif (index.row() % 2 != 0):
+        elif index.row() % 2 != 0:
             return self.__alternate_background_color
         return self.__background_color
 
@@ -30,7 +30,6 @@ class ReportDelegate(ListItemDelegate):
     def paint(self, painter, option, index):
         painter.save()
         rect = option.rect
-        font_matrics = QtGui.QFontMetrics(option.font)
         report_name = index.data(model.DisplayRole)
 
         painter.fillRect(rect, self.getBackgroudColor(option, index))
@@ -52,7 +51,11 @@ class KarteDelegate(ListItemDelegate):
 
         painter.fillRect(rect, self.getBackgroudColor(option, index))
         painter.drawPixmap(QtCore.QRect(rect.x() + 10, rect.y(), 50, 50), self.__karte_icon)
-        painter.drawText(rect.x() + 80, rect.y() + rect.height() * 0.5 + font_matrics.height() * 0.5 - 4, karte_name)
+        painter.drawText(
+            rect.x() + 80,
+            rect.y() + rect.height() * 0.5 + font_matrics.height() * 0.5 - 4,
+            karte_name,
+        )
 
         painter.restore()
 
@@ -83,7 +86,11 @@ class TesterDelegate(ListItemDelegate):
 
         painter.fillRect(rect, self.getBackgroudColor(option, index))
         painter.drawPixmap(QtCore.QRect(rect.x() + 12, rect.y() + 2, 16, 16), icon)
-        painter.drawText(rect.x() + 40, rect.y() + rect.height() * 0.5 + font_matrics.height() * 0.5 - 4, tester_name)
+        painter.drawText(
+            rect.x() + 40,
+            rect.y() + rect.height() * 0.5 + font_matrics.height() * 0.5 - 4,
+            tester_name,
+        )
 
         painter.restore()
 

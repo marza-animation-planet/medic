@@ -1,9 +1,6 @@
-from maya import OpenMaya
-from maya import OpenMayaUI
-from PySide2 import QtWidgets
-import shiboken2
-import sys
-
+from maya import OpenMaya, OpenMayaUI
+from Qt import QtWidgets
+from Qt.QtCompact import wrapInstance
 
 BlankSelectionList = OpenMaya.MSelectionList()
 if not hasattr(__builtins__, "long"):
@@ -11,12 +8,11 @@ if not hasattr(__builtins__, "long"):
 
 
 def ClearSelection():
-    global BlankSelectionList
     OpenMaya.MGlobal.setActiveSelectionList(BlankSelectionList)
 
 
 def getMayaMainWindow():
-    return shiboken2.wrapInstance(long(OpenMayaUI.MQtUtil.mainWindow()), QtWidgets.QMainWindow)
+    return wrapInstance(long(OpenMayaUI.MQtUtil.mainWindow()), QtWidgets.QMainWindow)
 
 
 def registSceneOpenCallback(function):
