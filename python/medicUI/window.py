@@ -1,8 +1,9 @@
-from PySide2 import QtWidgets, QtCore
-from maya import cmds
-from . import widgets
-from . import model
 import os
+
+from Qt import QtWidgets, QtCore
+from maya import cmds
+
+from . import widgets
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -82,8 +83,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__main_widget.StatusChanged.connect(self.__top_widget.status_label.setStatus)
 
     def __registJobs(self):
-        cmds.scriptJob(event=('NewSceneOpened', self.__main_widget.reset), parent=self.objectName())
-        cmds.scriptJob(event=('SceneOpened', self.__main_widget.reset), parent=self.objectName())
+        cmds.scriptJob(event=("NewSceneOpened", self.__main_widget.reset), parent=self.objectName())
+        cmds.scriptJob(event=("SceneOpened", self.__main_widget.reset), parent=self.objectName())
 
     def __next(self):
         self.__top_widget.next()

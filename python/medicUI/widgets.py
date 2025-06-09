@@ -1,16 +1,17 @@
-from PySide2 import QtWidgets, QtCore, QtGui
-from . import model
-from . import delegate
-from . import functions
-import medic
 import os
 import re
 
+import medic
+from Qt import QtCore, QtGui, QtWidgets
+
+from . import delegate
+from . import functions
+from . import model
 
 IconDir = os.path.abspath(os.path.join(__file__, "../icons"))
 
 
-class ParameterFunctions():
+class ParameterFunctions:
     @staticmethod
     def SetParmeterValue(param_container, pram_dict):
         for prm in pram_dict:
@@ -43,11 +44,13 @@ class ParameterFunctions():
     def CreateWidget(info):
         name, label, parm_type, default = info
 
-        if parm_type is medic.Types.Null or\
-           parm_type is medic.Types.BoolArray or\
-           parm_type is medic.Types.IntArray or\
-           parm_type is medic.Types.FloatArray or\
-           parm_type is medic.Types.StringArray:
+        if (
+            parm_type is medic.Types.Null
+            or parm_type is medic.Types.BoolArray
+            or parm_type is medic.Types.IntArray
+            or parm_type is medic.Types.FloatArray
+            or parm_type is medic.Types.StringArray
+        ):
             print("This type parameter is not supported yet : %s" % parm_type)
             return None, None
 
@@ -298,7 +301,6 @@ class ReportList(QtWidgets.QListView):
         self.source_model.setReportItems(report_items)
 
     def selectionChanged(self, selected, deselected):
-        indexes = selected.indexes()
         functions.ClearSelection()
 
         for index in self.selectedIndexes():
@@ -441,13 +443,13 @@ class TesterDetailWidget(QtWidgets.QWidget):
         self.__qt_fix_all_button.setEnabled(enable)
 
     def __clearLayout(self, layout):
-        while (True):
+        while True:
             item = layout.takeAt(0)
             if item:
-                l = item.layout()
+                item_lay = item.layout()
                 w = item.widget()
-                if l:
-                    self.__clearLayout(l)
+                if item_lay:
+                    self.__clearLayout(item_lay)
                 if w:
                     layout.removeWidget(w)
                     w.setParent(None)
@@ -554,7 +556,7 @@ class TopBarWidget(QtWidgets.QFrame):
             else:
                 for item in items:
                     item.hide()
-        
+
     def __makeWidgets(self):
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -573,8 +575,13 @@ class TopBarWidget(QtWidgets.QFrame):
         self.status_label = StatusLabel()
         self.__current_karte_label = CurrentKarteLabel()
 
-        self.__phase_items[1] = [self.reset_button, self.test_button, self.selection_only_check, self.status_label]
-        
+        self.__phase_items[1] = [
+            self.reset_button,
+            self.test_button,
+            self.selection_only_check,
+            self.status_label,
+        ]
+
         horizon_layout.addWidget(self.__browser_button_widget)
         horizon_layout.addSpacing(20)
         horizon_layout.addWidget(self.reset_button)
@@ -637,9 +644,16 @@ class MainWidget(QtWidgets.QWidget):
     def runSingle(self, testerName):
         if self.phase() > 0:
             mdl = self.__testers_widget.model()
-            idxs = mdl.match(mdl.index(0, 0, QtCore.QModelIndex()), model.DisplayRole, testerName, flags=QtCore.Qt.MatchExactly)
+            idxs = mdl.match(
+                mdl.index(0, 0, QtCore.QModelIndex()),
+                model.DisplayRole,
+                testerName,
+                flags=QtCore.Qt.MatchExactly,
+            )
             if idxs:
-                self.__testers_widget.selectionModel().setCurrentIndex(idxs[0], QtCore.QItemSelectionModel.ClearAndSelect)
+                self.__testers_widget.selectionModel().setCurrentIndex(
+                    idxs[0], QtCore.QItemSelectionModel.ClearAndSelect
+                )
                 self.__singleTest()
                 return mdl.data(idxs[0], model.TesterRole)
             else:
@@ -699,7 +713,7 @@ class MainWidget(QtWidgets.QWidget):
         self.__karte_toggle.setObjectName("show_all_kartes")
         self.__karte_toggle.stateChanged.connect(self.__showToggleChanged)
 
-        ## phase 0
+        # phase 0
         karte_layout_v = QtWidgets.QVBoxLayout()
         karte_layout_h = QtWidgets.QHBoxLayout()
         karte_layout_v.addWidget(self.__kartes_widget)
@@ -709,7 +723,7 @@ class MainWidget(QtWidgets.QWidget):
         main_layout.addLayout(karte_layout_v)
         self.__phase_widgets[0] = [self.__kartes_widget, self.__karte_toggle]
 
-        ## phase 2
+        # phase 2
         h_splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
         h_splitter.setObjectName("phase_2_splitter")
         h_splitter.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -719,7 +733,7 @@ class MainWidget(QtWidgets.QWidget):
         self.__phase_widgets[1] = [h_splitter]
         main_layout.addWidget(h_splitter)
 
-        ## signal
+        # signal
         self.__kartes_widget.KarteChanged.connect(self.__karteChanged)
         self.__testers_widget.TesterChanged.connect(self.__testerChanged)
         self.__detail_widget.ReportsChanged.connect(self.__reportsChanged)

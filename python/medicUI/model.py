@@ -1,5 +1,5 @@
 import medic
-from PySide2 import QtCore
+from Qt import QtCore
 
 DisplayRole = QtCore.Qt.DisplayRole
 KarteRole = QtCore.Qt.UserRole + 1
@@ -129,9 +129,13 @@ class KarteItem(object):
         testers = {}
 
         for t in self.__tester_items:
-            testers[t.name()] = {"tester": t, "dep": t.tester().Dependencies(), "state": medic.Statics.Wait}
+            testers[t.name()] = {
+                "tester": t,
+                "dep": t.tester().Dependencies(),
+                "state": medic.Statics.Wait,
+            }
 
-        while (True):
+        while True:
             for name, tester_dict in testers.items():
                 if tester_dict["state"] in over_states:
                     continue
@@ -255,15 +259,19 @@ class KarteModel(QtCore.QAbstractListModel):
                 if karte.hasTester(tester):
                     tester_items.append(TesterItem(tester))
             if karte.Visible():
-                self.__visible_items.append(KarteItem(karte, tester_items, visitorClass=self.__visitor_class))
+                self.__visible_items.append(
+                    KarteItem(karte, tester_items, visitorClass=self.__visitor_class)
+                )
             else:
-                self.__invisible_items.append(KarteItem(karte, tester_items, visitorClass=self.__visitor_class))
+                self.__invisible_items.append(
+                    KarteItem(karte, tester_items, visitorClass=self.__visitor_class)
+                )
 
         self.__karte_items = self.__visible_items[:]
 
         self.endResetModel()
 
-    #Karte "All" is prior to others
+    # Karte "All" is prior to others
     def sort(self, karteNames):
         res = [x for x in karteNames]
         res.sort()
@@ -284,7 +292,9 @@ class KarteModel(QtCore.QAbstractListModel):
             if karte.name() == karteName:
                 return self.createIndex(i, 0)
 
-        if not addHiddenKarte or len(self.__karte_items) == len(self.__visible_items) + len(self.__invisible_items):
+        if not addHiddenKarte or len(self.__karte_items) == len(self.__visible_items) + len(
+            self.__invisible_items
+        ):
             return self.createIndex(-1, -1)
 
         for karte in self.__invisible_items:
@@ -336,10 +346,10 @@ class TesterModel(QtCore.QAbstractListModel):
         self.endInsertRows()
 
     def sort(self, testerItems):
-        temp = {x.name():x for x in testerItems}
+        temp = {x.name(): x for x in testerItems}
         temp = sorted(temp.items())
         res = []
-        for k,v in temp:
+        for k, v in temp:
             res.append(v)
         return res
 

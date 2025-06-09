@@ -1,3 +1,5 @@
+# 1.5.5
+- Use Qt.py module instead of PySide2 directly as Maya 2025 use PySide6
 # 1.5.3
 - Support maya2022 and python3
 - Use PySide2 directly instead of Qt.py. Versions prior to maya2016 are no longer supported
