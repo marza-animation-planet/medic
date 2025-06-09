@@ -1,11 +1,12 @@
-from PySide2 import QtWidgets, QtCore, QtGui
-from . import model
-from . import delegate
-from . import functions
-import medic
 import os
 import re
 
+import medic
+from Qt import QtCore, QtGui, QtWidgets
+
+from . import delegate
+from . import functions
+from . import model
 
 IconDir = os.path.abspath(os.path.join(__file__, "../icons"))
 

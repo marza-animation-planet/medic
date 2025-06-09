@@ -1,5 +1,5 @@
 import medic
-from PySide2 import QtCore
+from Qt import QtCore
 
 DisplayRole = QtCore.Qt.DisplayRole
 KarteRole = QtCore.Qt.UserRole + 1
