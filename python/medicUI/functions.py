@@ -1,6 +1,6 @@
 from maya import OpenMaya, OpenMayaUI
 from Qt import QtWidgets
-from Qt.QtCompact import wrapInstance
+from Qt.QtCompat import wrapInstance
 
 BlankSelectionList = OpenMaya.MSelectionList()
 if not hasattr(__builtins__, "long"):
